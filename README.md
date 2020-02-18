@@ -1,4 +1,4 @@
-# CarND-Path-Planning-Project
+# CarND-Path-Planning-Project (Highway driving)
 Self-Driving Car Engineer Nanodegree Program
    
 ### Simulator.
@@ -10,9 +10,33 @@ sudo chmod u+x {simulator_file_name}
 ```
 
 ### Goals
-In this project your goal is to safely navigate around a virtual highway with other traffic that is driving +-10 MPH of the 50 MPH speed limit. You will be provided the car's localization and sensor fusion data, there is also a sparse map list of waypoints around the highway. The car should try to go as close as possible to the 50 MPH speed limit, which means passing slower traffic when possible, note that other cars will try to change lanes too. The car should avoid hitting other cars at all cost as well as driving inside of the marked road lanes at all times, unless going from one lane to another. The car should be able to make one complete loop around the 6946m highway. Since the car is trying to go 50 MPH, it should take a little over 5 minutes to complete 1 loop. Also the car should not experience total acceleration over 10 m/s^2 and jerk that is greater than 10 m/s^3.
+In this project the goal is it to safely navigate around a virutal highway with other vehicles driving about -/+ 10mph of the allowed speed limit (50mph). To build the behavior planner the required car localization and sensor-fusion-data is provided by the simulator. The car should try to changes lanes to pass slower cars or stay in lane and follow the car ahead respective to a secure distance when there is no option to pass safely.
+
+Acceptance criteria:
+- The car passes cars if possible
+- The maximum total acceleration 10 m/s^2
+- The maximum jerk is 10 m/s^3
+- Lane changes do not take longer than 3 seconds
+- Car stays in lane (unless going to another lane)
+
+
+
+
+- The car drives according to the speed limit.
+- The car is able to drive at least 4.32 miles without incident..
+- Max Acceleration and Jerk are not Exceeded. 
+- Car does not have collisions.
+- The car stays in its lane, except for the time between changing lanes.
+- The car is able to change lanes
+
+
+
+
+
+
 
 #### The map of the highway is in data/highway_map.txt
+Provided by udacity:
 Each waypoint in the list contains  [x,y,s,dx,dy] values. x and y are the waypoint's map coordinate position, the s value is the distance along the road to get to that waypoint in meters, the dx and dy values define the unit normal vector pointing outward of the highway loop.
 
 The highway's waypoints loop around so the frenet s value, distance along the road, goes from 0 to 6945.554.
@@ -20,54 +44,10 @@ The highway's waypoints loop around so the frenet s value, distance along the ro
 ## Basic Build Instructions
 
 1. Clone this repo.
-2. Make a build directory: `mkdir build && cd build`
+2. Make a build directory `mkdir build`
+3. Navigate into directory `cd build`
 3. Compile: `cmake .. && make`
 4. Run it: `./path_planning`.
-
-Here is the data provided from the Simulator to the C++ Program
-
-#### Main car's localization Data (No Noise)
-
-["x"] The car's x position in map coordinates
-
-["y"] The car's y position in map coordinates
-
-["s"] The car's s position in frenet coordinates
-
-["d"] The car's d position in frenet coordinates
-
-["yaw"] The car's yaw angle in the map
-
-["speed"] The car's speed in MPH
-
-#### Previous path data given to the Planner
-
-//Note: Return the previous list but with processed points removed, can be a nice tool to show how far along
-the path has processed since last time. 
-
-["previous_path_x"] The previous list of x points previously given to the simulator
-
-["previous_path_y"] The previous list of y points previously given to the simulator
-
-#### Previous path's end s and d values 
-
-["end_path_s"] The previous list's last point's frenet s value
-
-["end_path_d"] The previous list's last point's frenet d value
-
-#### Sensor Fusion Data, a list of all other car's attributes on the same side of the road. (No Noise)
-
-["sensor_fusion"] A 2d vector of cars and then that car's [car's unique ID, car's x position in map coordinates, car's y position in map coordinates, car's x velocity in m/s, car's y velocity in m/s, car's s position in frenet coordinates, car's d position in frenet coordinates. 
-
-## Details
-
-1. The car uses a perfect controller and will visit every (x,y) point it recieves in the list every .02 seconds. The units for the (x,y) points are in meters and the spacing of the points determines the speed of the car. The vector going from a point to the next point in the list dictates the angle of the car. Acceleration both in the tangential and normal directions is measured along with the jerk, the rate of change of total Acceleration. The (x,y) point paths that the planner recieves should not have a total acceleration that goes over 10 m/s^2, also the jerk should not go over 50 m/s^3. (NOTE: As this is BETA, these requirements might change. Also currently jerk is over a .02 second interval, it would probably be better to average total acceleration over 1 second and measure jerk from that.
-
-2. There will be some latency between the simulator running and the path planner returning a path, with optimized code usually its not very long maybe just 1-3 time steps. During this delay the simulator will continue using points that it was last given, because of this its a good idea to store the last points you have used so you can have a smooth transition. previous_path_x, and previous_path_y can be helpful for this transition since they show the last points given to the simulator controller with the processed points already removed. You would either return a path that extends this previous path or make sure to create a new path that has a smooth transition with this last path.
-
-## Tips
-
-A really helpful resource for doing this project and creating smooth trajectories was using http://kluge.in-chemnitz.de/opensource/spline/, the spline function is in a single hearder file is really easy to use.
 
 ---
 
@@ -92,54 +72,193 @@ A really helpful resource for doing this project and creating smooth trajectorie
     git checkout e94b6e1
     ```
 
-## Editor Settings
-
-We've purposefully kept editor configuration files out of this repo in order to
-keep it as simple and environment agnostic as possible. However, we recommend
-using the following settings:
-
-* indent using spaces
-* set tab width to 2 spaces (keeps the matrices in source code aligned)
-
 ## Code Style
 
-Please (do your best to) stick to [Google's C++ style guide](https://google.github.io/styleguide/cppguide.html).
-
-## Project Instructions and Rubric
-
-Note: regardless of the changes you make, your project must be buildable using
-cmake and make!
+The code style is inspired by [Google's C++ style guide](https://google.github.io/styleguide/cppguide.html).
 
 
-## Call for IDE Profiles Pull Requests
+## Behavior planning model
+The base of the project to follow the lanes and ensure a smooth curvatur and lane-change is implemented as described in the [Q/A video for this project](https://www.youtube.com/watch?v=7sI3VHFPP0w).
 
-Help your fellow students!
+After implementing the basic architecture i've decided to implemented two variants of solutions with differents approaches reactive and predictive. 
+In my main.cpp you can find the "reactive"-approach which is also the variant i used for the submission.
+The "predictive"-approach handled some situations better but still has little adjustments/fixes to do.
 
-We decided to create Makefiles with cmake to keep this project as platform
-agnostic as possible. Similarly, we omitted IDE profiles in order to ensure
-that students don't feel pressured to use one IDE or another.
+### Reactive
 
-However! I'd love to help people get up and running with their IDEs of choice.
-If you've created a profile for an IDE that you think other students would
-appreciate, we'd love to have you add the requisite profile files and
-instructions to ide_profiles/. For example if you wanted to add a VS Code
-profile, you'd add:
+The reactive approach is mostly inspired by the Q/A video. In general it uses the following logic:
+As long as there is no car X meters in front of me on the same lane just keep driving. When a car is less than X meter in front of me on the same lane, check if there is a lane on the left- or right-side of me and if there is enough space to do a lane-change into this specific lane (no car driving in the lane Y meters in front or behind relative to my current position). Is there a lane without a car in the near distance: do a lane-change to the specific lane. If there is no option to do a lane-change, stay in the current lane and adjust the velocity of my car to be a little bit lower than the not passable car directly in front of us, to avoid a collision.
+To ensure that there is no collision during a lane-change within a relativly slow/fast car, the Y-value (which checks if there is a car infront-/behind me on the other lane) is quite big chosen.
 
-* /ide_profiles/vscode/.vscode
-* /ide_profiles/vscode/README.md
+Advantages:
+- Drives quite save
+- Relativly easy to implement
+- Low amount of parameters to adjust
 
-The README should explain what the profile does, how to take advantage of it,
-and how to install it.
+Disadvantages:
+- Does not evaluate the best option for a lane-change
+- The big choosen Y-value sometimes blocks options to pass a car on another lane, because it waits for a too big gap on the other lanes.
 
-Frankly, I've never been involved in a project with multiple IDE profiles
-before. I believe the best way to handle this would be to keep them out of the
-repo root to avoid clutter. My expectation is that most profiles will include
-instructions to copy files to a new location to get picked up by the IDE, but
-that's just a guess.
+For sure the whole code is well commented. For completion i've added some code-snippets and description below:
 
-One last note here: regardless of the IDE used, every submitted project must
-still be compilable with cmake and make./
+The following code-snippets are from "./src/main.cpp"
 
-## How to write a README
-A well written README file can enhance your project and portfolio.  Develop your abilities to create professional README files by completing [this free course](https://www.udacity.com/course/writing-readmes--ud777).
+Go from map- to local-coordinates (inspired by Udacity) 
+```cpp
+// Calculate the coordinates from world to car-positions. 
+// As described in the Udacity Q|A video "Makes the math much more easier"
+for(int i = 0; i < ptsx.size(); i++) {
+  // Store the shift in coordinates for x, y
+	double shift_x = ptsx[i] - ref_x;
+	double shift_y = ptsy[i] - ref_y;
+  
+  // Take in account the current yaw-rate for position-transformation to local coordinates
+  ptsx[i] = shift_x * cos(0 - ref_yaw) - shift_y * sin(0 - ref_yaw);
+  ptsy[i] = shift_x * sin(0 - ref_yaw) + shift_y * cos(0 - ref_yaw);
+}
+```
 
+Check if the given set of values from sensor-fusion-data should trigger a lane-change.
+This snippet is called for all available sensor-fusion-data separatly
+```cpp
+// If car is on same lane as my car
+if (d_to_lane(car_d) == d_to_lane(d)) {
+  
+  // If the car is in front of us and closer than 30s (s from frenet 
+  // coordinate: https://www.classe.cornell.edu/~hoff/LECTURES/10USPAS/notes04.pdf)
+  if ((check_car_s > car_curr_s) && (check_car_s - car_curr_s < 30)) {
+    
+    // We should try a lane-change
+    too_close = true;
+    
+    // Save speed if the car is the slowest. This will be used for velocity adjustment
+    if (check_speed < car_ahead_velocity) {
+    car_ahead_velocity = check_speed;
+    }
+    // Check if it is closer than a car scanned before
+    if (check_car_s - car_curr_s < car_ahead_s_delta) {
+    	car_ahead_s_delta = check_car_s - car_curr_s;
+    }
+  }             
+}
+```
+
+Check which lane is free to change to.
+Also this is called for each sensor-fusion-set.
+```cpp
+// Avoid collisions
+// Check if the lane would be safe to go. Therefore there has to be no car 30-s ahead or behind me based on my current position.
+if ((check_car_s > car_curr_s - 30) && (check_car_s < car_s + 30)) {
+	// If a car is found in the range -/+ 30-s of me, mark that lane as unsafe.
+  	switch(d_to_lane(d)) {
+      case 0: left_lane_save = false; break;
+      case 1: middle_lane_save = false; break;
+      case 2: right_lane_save = false; break;
+    }
+}
+```
+
+Check if a alternative lane is available
+```cpp
+bool switch_lane_possible = false;
+int plannedLane = -1;
+
+// When there is a car closly ahead to us
+if (too_close) {
+  // If we are on the middle lane       
+  if (d_to_lane(car_d) == 1) {
+      if (left_lane_save) {
+        // Left-lane has enough space. Go there
+        plannedLane = 0;
+        switch_lane_possible = true;
+      } else if (right_lane_save) {
+        // Right lane has enough space. Go there
+        plannedLane = 2;
+        switch_lane_possible = true;
+      }
+  // If we are on the left-/right-lane, check for the middle lane
+  } else if (d_to_lane(car_d) == 0 || d_to_lane(car_d) == 2) {
+      if (middle_lane_save) {
+        // Left-lane has enough space. Go there
+        plannedLane = 1;
+        switch_lane_possible = true;
+      }
+  } 
+}
+```
+
+Additional behavior-planning in the part of the code were the next-waypoints are calculated.
+If ensured that this the acceleration/deceleration is adjusted in the waypoint-planning-block to ensure a better acceleration/deceleration for each waypoint, the suggested solution from the  Q|A video
+had the problem, that it only accelerated/decelerated for the next X waypoints grouped instead of for each step separatly, this leads to a bigger required distance to archieve the desired velocity.
+```cpp
+if (!too_close) {
+  if (car_ahead_s_delta >= 10) {
+    // If the car is far enough away and we drive slower than allowed -> accelerate
+    if (ref_vel <= max_vel) {
+      ref_vel += max_acceleration;
+    }
+  } else {
+    // Adjust speed to the car driving ahead if it is still faster than us.
+    if (ref_vel < (car_ahead_velocity * 2.24)) {
+	    ref_vel += max_acceleration;
+    }
+  }
+} else {
+  // If there is a car very close ahead of us
+  // Adjust speed if a lane-change was not possible
+  if (!switch_lane_possible) {
+    // If the car is slower than us (* 2.24 is required because we drive in mph and the measurement of the car ahead is in mps)
+    if (ref_vel > (car_ahead_velocity * 2.24)) {
+      // Reduce speed relativly to the distance to the car ahead. The closer we get, the more we decelerate
+      ref_vel -= max_deceleration / pow((car_ahead_s_delta - 5), 0.1); // Decrease velocity based on distance
+    }
+  }
+}
+```
+
+### Predictive
+
+Summary of the following section (TL;DR;)
+In this section you can read about another approach i've developed during this project. The approach is just for testing purpose and currently not part of the main.cpp-code i've used for the project submission. This approach uses sensor-fusion values which are further away to decide which specific lane is the best choice instead of change to a random free lane if it is free to go.
+
+
+The predictive part can be found in the "main_predictive.cpp"-file in the "src"-folder.
+Based on the reactive solution i've created a copy which uses a more predicitive approach and even uses more complexe cost-functions for lane-changes.
+The base of the algorithm is the same as described above (see: Reactive). Moreover this solution has a "best_lane" evaluation which scans each car ahead with a distance of lower than Z meters, if there is a car in this range, a "costs"-value is added for the lane the car is driving in. Because the Z-value is choosen to be larger than the trigger which leads to a lane-change, the calculated cost for each lane also contains information which lane may could be the best based on others cars way ahead of our current location. This is especially intersting if i currently drive on the middle-lane and can choose between changing to the left or right lane. Based on the calculated cost i can predict which of the two options would be better for the near future.
+
+To avoid unnecessary lane-changes this solution only does a lane-chane, when a car is X-meters in front of our current location (same as in the reactive-approach). 
+
+Doing my testing i got pretty good results as my car adjust the speed when it is getting closer to a car ahead and there is no option to switch lane. Due to the fact, that there randomly appeared car which switched lane very close infront of me, i've also added a special handling for very close cars directly in front of me.
+
+I look forward to improve this approach after doing the nanodegree and may find a even better solution.
+
+Advantages:
+- Choose the best-lane if there are more than 1 option to choose from
+- Calculates the best lane even if it is more than 1-lane-change away
+
+Disadvantages:
+- Lot of parameters to adjust
+- Way more complexe to program and more error-prone
+
+For my submission i've decided to submit the 'Reactive'-approach of the algorithm, because it is still fast enough and drives more-safely under exceptional circumstances.
+
+The code snippes below are part of the "./src/main_predictive.cpp"
+
+Example of the cost-function for each lane:
+This function does not only scans how far away the next car is on the specific lane but also if there are multiple cars on the same lane because this increases the risk for a slower car (based of experience from the simulator)
+Moreover the closer the car, the higher the cost (see: pow(..., 1.2))
+```cpp
+// Calculcate the cost for each lane, the costs bases on distance to car and amount of cars.
+if ((check_car_s > car_curr_s) && (check_car_s - car_curr_s) < planning_distance) {
+  switch(d_to_lane(d)) {
+    case 0: left_lane_cost   += pow(planning_distance - (check_car_s - car_s), 1.2); break;
+    case 1: middle_lane_cost += pow(planning_distance - (check_car_s - car_s), 1.2); break;
+    case 2: right_lane_cost  += pow(planning_distance - (check_car_s - car_s), 1.2); break;
+  }
+}
+```
+
+Additional here is the current formula which calculate the required gap on another lane to indicate a lane-change would be save. As described in the code, this formula evaluate a lane-change to be safer when my velocity is closer to the maximum velocity. The idea behind the formula is: if i nearly drive the maximum velocity, the delta between my velocity and a driving car on the other lane is less as when i need to do e.g. a cold-start, so the required space is smaller too (this avoids rear-end collision from other cars into mine).
+```cpp
+double dynamic_safty_distance = ((fabs(ref_vel - max_vel) / max_vel) * lane_change_safty_range) + 15;
+```
