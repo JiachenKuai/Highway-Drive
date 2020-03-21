@@ -270,3 +270,11 @@ Additional here is the current formula which calculate the required gap on anoth
 ```cpp
 double dynamic_safty_distance = ((fabs(ref_vel - max_vel) / max_vel) * lane_change_safty_range) + 15;
 ```
+
+# About
+
+Made with 💗 & 💻 by Kevin H.
+
+More about me can be found here
+- :octocat: [GitHub](https://github.com/KevinHubert-Dev) 
+- 🏠 [Homepage](http://Kevin-Hubert.de/)
