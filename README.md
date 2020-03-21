@@ -1,23 +1,15 @@
 # Path-Planning-Project (Highway driving)
 This project is part of my "Self-Driving Car Engineer"-Nanodegree Program at Udacity.com
 
+
 ## Goal
-The goal of this project is to safely navigate a virtual highway with different cars and try to pass slower vehicles infront of you when it is safe to go for a lane-change.
+The goal of this project is to safely navigate a car on a virtual highway with different cars.
+
+To build the behavior planner the required car localization and sensor-fusion-data is provided by the simulator. The car should try to changes lanes to pass slower cars or stay in lane and follow the car ahead respective to a secure distance when there is no option to pass safely.
+
+![project_result](./img/highwaydrive.gif)
+
 All acceptance-criteria:
-
-
-### Simulator.
-You can download the Term3 Simulator which contains the Path Planning Project from the [releases tab (https://github.com/udacity/self-driving-car-sim/releases/tag/T3_v1.2).  
-
-To run the simulator on Mac/Linux, first make the binary file executable with the following command:
-```shell
-sudo chmod u+x {simulator_file_name}
-```
-
-### Goals
-In this project the goal is it to safely navigate around a virutal highway with other vehicles driving about -/+ 10mph of the allowed speed limit (50mph). To build the behavior planner the required car localization and sensor-fusion-data is provided by the simulator. The car should try to changes lanes to pass slower cars or stay in lane and follow the car ahead respective to a secure distance when there is no option to pass safely.
-
-Acceptance criteria:
 - The car passes cars if possible
 - The maximum total acceleration 10 m/s^2
 - The maximum jerk is 10 m/s^3
@@ -29,10 +21,13 @@ Acceptance criteria:
 - The car stays in its lane, except for the time between changing lanes.
 
 
+### Simulator.
+You can [download the Simulator](https://github.com/udacity/self-driving-car-sim/releases/tag/T3_v1.2) which contains the Path Planning Project.
 
-
-
-
+To run the simulator on mac/linux, first make the binary file executable with the following command:
+``` bash
+sudo chmod u+x {simulator_file_name}
+```
 
 
 ## The map of the highway is in data/highway_map.txt
@@ -41,9 +36,10 @@ Each waypoint in the list contains  [x,y,s,dx,dy] values. x and y are the waypoi
 
 The highway's waypoints loop around so the frenet s value, distance along the road, goes from 0 to 6945.554.
 
+
 ## Basic Build Instructions
 
-```
+``` bash
 # Clone
 git clone https://github.com/KevinHubert-Dev/Highway-Drive.git.
 cd Highway-Drive
@@ -59,7 +55,7 @@ cmake .. && make
 # Start
 ./path_planning
 ```
----
+
 
 ## Dependencies
 
@@ -82,6 +78,7 @@ cmake .. && make
     git checkout e94b6e1
     ```
 
+
 ## Code Style
 
 The code style is inspired by [Google's C++ style guide](https://google.github.io/styleguide/cppguide.html).
@@ -93,6 +90,7 @@ The base-implementation of the project to follow the lanes and ensure a smooth c
 After implementing the basic architecture i've decided to implemented two variants of solutions with differents approaches reactive and predictive. 
 In my main.cpp you can find the "reactive"-approach which is also the variant i used for the submission.
 The "predictive"-approach handled some situations better but still has little adjustments/fixes to do.
+
 
 ### Reactive
 
