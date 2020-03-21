@@ -1,6 +1,11 @@
-# CarND-Path-Planning-Project (Highway driving)
-Self-Driving Car Engineer Nanodegree Program
-   
+# Path-Planning-Project (Highway driving)
+This project is part of my "Self-Driving Car Engineer"-Nanodegree Program at Udacity.com
+
+## Goal
+The goal of this project is to safely navigate a virtual highway with different cars and try to pass slower vehicles infront of you when it is safe to go for a lane-change.
+All acceptance-criteria:
+
+
 ### Simulator.
 You can download the Term3 Simulator which contains the Path Planning Project from the [releases tab (https://github.com/udacity/self-driving-car-sim/releases/tag/T3_v1.2).  
 
@@ -18,16 +23,10 @@ Acceptance criteria:
 - The maximum jerk is 10 m/s^3
 - Lane changes do not take longer than 3 seconds
 - Car stays in lane (unless going to another lane)
-
-
-
-
 - The car drives according to the speed limit.
 - The car is able to drive at least 4.32 miles without incident..
-- Max Acceleration and Jerk are not Exceeded. 
 - Car does not have collisions.
 - The car stays in its lane, except for the time between changing lanes.
-- The car is able to change lanes
 
 
 
@@ -35,7 +34,8 @@ Acceptance criteria:
 
 
 
-#### The map of the highway is in data/highway_map.txt
+
+## The map of the highway is in data/highway_map.txt
 Provided by udacity:
 Each waypoint in the list contains  [x,y,s,dx,dy] values. x and y are the waypoint's map coordinate position, the s value is the distance along the road to get to that waypoint in meters, the dx and dy values define the unit normal vector pointing outward of the highway loop.
 
@@ -43,12 +43,22 @@ The highway's waypoints loop around so the frenet s value, distance along the ro
 
 ## Basic Build Instructions
 
-1. Clone this repo.
-2. Make a build directory `mkdir build`
-3. Navigate into directory `cd build`
-3. Compile: `cmake .. && make`
-4. Run it: `./path_planning`.
+```
+# Clone
+git clone https://github.com/KevinHubert-Dev/Highway-Drive.git.
+cd Highway-Drive
 
+# Install dependencies
+./install-ubuntu.sh
+
+# Build
+mkdir build
+cd build
+cmake .. && make
+
+# Start
+./path_planning
+```
 ---
 
 ## Dependencies
@@ -78,7 +88,7 @@ The code style is inspired by [Google's C++ style guide](https://google.github.i
 
 
 ## Behavior planning model
-The base of the project to follow the lanes and ensure a smooth curvatur and lane-change is implemented as described in the [Q/A video for this project](https://www.youtube.com/watch?v=7sI3VHFPP0w).
+The base-implementation of the project to follow the lanes and ensure a smooth curvatur is inspired by the udacity-tutorial and uses [spline-interpolation](https://kluge.in-chemnitz.de/opensource/spline/). A introducing to the base-architecture can be found in the [Q/A video for this project](https://www.youtube.com/watch?v=7sI3VHFPP0w).
 
 After implementing the basic architecture i've decided to implemented two variants of solutions with differents approaches reactive and predictive. 
 In my main.cpp you can find the "reactive"-approach which is also the variant i used for the submission.
